@@ -11,7 +11,7 @@ function displayErrors(data) {
      * Display modal with the newly added content.
      */
     let heading = `JSHint Results for ${data.file}`;
-    
+
     if (data.total_errors === 0) {
         results = `<div class="no-errors">No errors found!</div>`;
     } else {
@@ -29,12 +29,33 @@ function displayErrors(data) {
     };
 };
 
+function processOptions(form) {
+    /**
+     * Retrieve options from API.
+     * Rearrange options as instructed with comma separated pairs.
+     * Print the formatted output on the screen for the user.
+     */
+
+    let optArray = [];
+
+    for (let entry of form.entries()) {
+        if (entry[0] === "options") {
+            optArray.push(entry[1]);
+        }
+    };
+    form.delete("options");
+    form.append("options", optArray.join());
+
+    return form; // It's important in software development to push data in a format that complies with the expected data format of the relevant API(s).
+};
+
+
 async function postForm(e) {
     /**
      * Make a POST request.
      * POST the retrieved data to the API.
      */
-    const form = new FormData(document.getElementById("checksform"));
+    const form = processOptions(new FormData(document.getElementById("checksform")));
 
     const response = await fetch(API_URL, {
         method: "POST",
